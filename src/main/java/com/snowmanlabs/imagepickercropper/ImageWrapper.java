@@ -1,16 +1,11 @@
-package io.playpet.imagepickercropper;
+package com.snowmanlabs.imagepickercropper;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-
-import java.io.Serializable;
 
 public class ImageWrapper implements Parcelable {
     private Uri uri;

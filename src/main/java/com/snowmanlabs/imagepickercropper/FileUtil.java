@@ -1,4 +1,4 @@
-package io.playpet.imagepickercropper;
+package com.snowmanlabs.imagepickercropper;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;

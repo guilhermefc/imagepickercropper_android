@@ -1,4 +1,4 @@
-package io.playpet.imagepickercropper;
+package com.snowmanlabs.imagepickercropper;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -7,10 +7,9 @@ import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.Serializable;
+import io.playpet.imagepickercropper.R;
 
 /**
  * Created by mayowa.adegeye on 28/06/2016.
