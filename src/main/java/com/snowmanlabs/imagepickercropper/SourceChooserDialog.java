@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import io.playpet.imagepickercropper.R;
-
 /**
  * Created by mayowa.adegeye on 28/06/2016.
  */
@@ -44,7 +42,7 @@ public class SourceChooserDialog extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.layout_custom_bottom_sheet, container, false);
-        TextView title = (TextView) v.findViewById(R.id.title);
+        TextView title = v.findViewById(R.id.title);
 
         title.setText(mTitle);
         View galleryButton = v.findViewById(R.id.gallery_icon);
