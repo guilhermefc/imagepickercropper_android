@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="32dp"
+    android:paddingLeft="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_vertical_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/gallery_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/circle_accent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:gravity="center">
+        <!--android:background="@drawable/circle_accent"-->
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="17dp"
+            android:src="@drawable/ic_galeria"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gallery"
+        app:layout_constraintTop_toBottomOf="@id/gallery_icon"
+        app:layout_constraintLeft_toLeftOf="@id/gallery_icon"
+        app:layout_constraintRight_toRightOf="@id/gallery_icon"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/black"/>
+
+    <LinearLayout
+        android:id="@+id/camera_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/circle_primary"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintLeft_toRightOf="@id/gallery_icon"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="48dp"
+        android:gravity="center">
+        <!--android:background="@drawable/circle_primary"-->
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/button_camera"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/camera"
+        app:layout_constraintTop_toBottomOf="@id/camera_icon"
+        app:layout_constraintLeft_toLeftOf="@id/camera_icon"
+        app:layout_constraintRight_toRightOf="@id/camera_icon"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/black"/>
+
+
+</android.support.constraint.ConstraintLayout>
