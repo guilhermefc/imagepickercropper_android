@@ -196,6 +196,9 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
     private void compressImage(File file){
 
         new Compressor(this)
+                .setQuality(75)
+                .setMaxWidth(640)
+                .setMaxHeight(480)
                 .compressToFileAsFlowable(file)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
