@@ -17,6 +17,13 @@ import android.support.v7.app.AppCompatActivity;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.File;
+
+import id.zelory.compressor.Compressor;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
 /**
  * Created by felipepadilha on 21/03/17.
  */
@@ -144,12 +151,8 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
                 outputUri = result.getUri();
             }
 
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra(IMAGE, outputUri);
-            setResult(Activity.RESULT_OK, resultIntent);
+            compressImage(new File(outputUri.getPath()));
 
-            sourceChooser.dismiss();
-            finish();
         }
 
     }
@@ -188,5 +191,31 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
                 }
                 break;
         }
+    }
+
+    private void compressImage(File file){
+
+        new Compressor(this)
+                .compressToFileAsFlowable(file)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<File>() {
+                    @Override
+                    public void accept(File file) {
+
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra(IMAGE, Uri.fromFile(file));
+                        setResult(Activity.RESULT_OK, resultIntent);
+
+                        sourceChooser.dismiss();
+                        finish();
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                });
     }
 }
