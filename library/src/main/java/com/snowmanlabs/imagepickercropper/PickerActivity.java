@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,6 +39,8 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
     private static final int REQUEST_LOAD_IMAGE = 200;
 
     private static final String FILENAME = "image.jpeg";
+    private static final String IMAGE_WRAPPER = "image_wrapper";
+    private static final String SOURCE_CHOOSER = "source_chooser";
 
     private ImageWrapper mImageWrapper;
     private SourceChooserDialog sourceChooser;
@@ -53,11 +56,17 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(IMAGE_WRAPPER)) mImageWrapper = (ImageWrapper) savedInstanceState.getSerializable(IMAGE_WRAPPER);
+        if (savedInstanceState != null && savedInstanceState.containsKey(SOURCE_CHOOSER)) sourceChooser = (SourceChooserDialog) savedInstanceState.getSerializable(SOURCE_CHOOSER);
+
         Bundle extras = getIntent().getExtras();
         title = extras.getString(TITLE);
-        sourceChooser = SourceChooserDialog.getInstance(title);
-        sourceChooser.show(getSupportFragmentManager(), "SourceChooser");
-        sourceChooser.addEventListener(this);
+
+        if (sourceChooser == null) {
+            sourceChooser = SourceChooserDialog.getInstance(title);
+            sourceChooser.show(getSupportFragmentManager(), "SourceChooser");
+            sourceChooser.addEventListener(this);
+        }
     }
 
     @Override
@@ -89,6 +98,8 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
             //create new Intent
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageWrapper.getUri());
+            intent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
 
 
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -118,6 +129,22 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
             ActivityCompat.requestPermissions(PickerActivity.this,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_GALLERY);
         }
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(IMAGE_WRAPPER, mImageWrapper);
+//        outState.putSerializable(SOURCE_CHOOSER, sourceChooser);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+
     }
 
     @Override

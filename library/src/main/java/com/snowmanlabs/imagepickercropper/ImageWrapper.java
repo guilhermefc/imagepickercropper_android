@@ -7,7 +7,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 
-public class ImageWrapper implements Parcelable {
+import java.io.Serializable;
+
+public class ImageWrapper implements Parcelable, Serializable {
     private Uri uri;
     private String fileName;
     private Bitmap bitmap;

@@ -2,12 +2,15 @@ package com.snowmanlabs.imagepickercropper;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.io.Serializable;
 
 /**
  * Created by mayowa.adegeye on 28/06/2016.
@@ -27,7 +30,7 @@ public class SourceChooserDialog extends BottomSheetDialogFragment {
         return fragment;
     }
 
-    public void addEventListener(SourceChooser callback){
+    public void addEventListener(SourceChooser callback) {
         this.callback = callback;
     }
 
@@ -35,12 +38,16 @@ public class SourceChooserDialog extends BottomSheetDialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTitle = getArguments().getString(TITLE);
+
+//        if (savedInstanceState != null && savedInstanceState.containsKey(CALLBACK))
+//            callback = (SourceChooser) savedInstanceState.getSerializable(CALLBACK);
 //        callback = (SourceChooser) getArguments().getSerializable(CALLBACK);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View v = inflater.inflate(R.layout.layout_custom_bottom_sheet, container, false);
         TextView title = v.findViewById(R.id.title);
 
@@ -65,15 +72,24 @@ public class SourceChooserDialog extends BottomSheetDialogFragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+//        outState.putSerializable(CALLBACK, callback);
+    }
+
+    @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
 
-        callback.onDismiss();
+        if (callback != null) callback.onDismiss();
     }
 
-    public interface SourceChooser{
+    public interface SourceChooser {
         void onDismiss();
+
         void onChooseCamera();
+
         void onChooseGallery();
     }
 }
