@@ -25,6 +25,7 @@ import java.io.Serializable;
 
 import id.zelory.compressor.Compressor;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -33,6 +34,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class PickerActivity extends AppCompatActivity implements SourceChooserDialog.SourceChooser {
+
+    private CompositeDisposable compositeDisposable;
 
     private static final String TITLE = "screenTitle";
     public static final String IMAGE = "image";
@@ -225,6 +228,7 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
 
     private void compressImage(File file) {
 
+        compositeDisposable.add(
         new Compressor(this)
                 .setQuality(75)
                 .setMaxWidth(640)
@@ -249,7 +253,7 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
                     public void accept(Throwable throwable) {
                         Log.e(TAG, throwable.toString());
                     }
-                });
+                }));
     }
 
     public static class AspectRatioWrapper implements Serializable {
@@ -268,5 +272,12 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
         int getRatioY() {
             return ratioY;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
+        compositeDisposable.dispose();
     }
 }
