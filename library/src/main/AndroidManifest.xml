@@ -9,7 +9,6 @@
         
         <activity android:name=".PickerActivity"
             android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.Transparent">
         </activity>
 

@@ -25,6 +25,7 @@ import java.io.Serializable;
 
 import id.zelory.compressor.Compressor;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -33,6 +34,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class PickerActivity extends AppCompatActivity implements SourceChooserDialog.SourceChooser {
+
+    private CompositeDisposable compositeDisposable;
 
     private static final String TITLE = "screenTitle";
     public static final String IMAGE = "image";
@@ -45,6 +48,9 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
     private static final String IMAGE_WRAPPER = "image_wrapper";
     private static final String SOURCE_CHOOSER = "source_chooser";
     private static final String ASPECT_RATIO = "aspect_ratio";
+    public static final String ONLY_CAMERA = "only_camera";
+    public static final String ONLY_GALLERY = "only_gallery";
+    private static final String SELECTOR_TYPE = "image_selector_type_camera";
     private static final String TAG = PickerActivity.class.getSimpleName();
 
     private ImageWrapper mImageWrapper;
@@ -59,6 +65,17 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
         return intent;
     }
 
+    public static Intent getIntent(Context context, String title, String selectorType) {
+        Intent intent = new Intent(context, PickerActivity.class);
+        intent.putExtra(TITLE, title);
+        if(selectorType.equals(ONLY_CAMERA) || selectorType.equals(ONLY_GALLERY)){
+            intent.putExtra(SELECTOR_TYPE, selectorType);
+        }else {
+            throw new IllegalArgumentException("wrong selector type, selector type must match one of the two types - ONLY_CAMERA or ONLY_GALLERY");
+        }
+        return intent;
+    }
+
     public static Intent getIntent(Context context, String title, AspectRatioWrapper aspectRatioWrapper) {
         Intent intent = new Intent(context, PickerActivity.class);
         intent.putExtra(TITLE, title);
@@ -70,10 +87,17 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        compositeDisposable = new CompositeDisposable();
+
+        String selectorType = null;
+
         if (savedInstanceState != null && savedInstanceState.containsKey(IMAGE_WRAPPER))
             mImageWrapper = (ImageWrapper) savedInstanceState.getSerializable(IMAGE_WRAPPER);
         if (savedInstanceState != null && savedInstanceState.containsKey(SOURCE_CHOOSER))
             sourceChooser = (SourceChooserDialog) savedInstanceState.getSerializable(SOURCE_CHOOSER);
+        if(getIntent().getExtras() != null && getIntent().getExtras().containsKey(SELECTOR_TYPE)){
+            selectorType = getIntent().getExtras().getString(SELECTOR_TYPE);
+        }
 
         Bundle extras = getIntent().getExtras();
         screenTitle = extras.getString(TITLE);
@@ -84,9 +108,21 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
         }
 
         if (sourceChooser == null) {
-            sourceChooser = SourceChooserDialog.getInstance(screenTitle);
-            sourceChooser.show(getSupportFragmentManager(), "SourceChooser");
-            sourceChooser.addEventListener(this);
+            if(selectorType == null) {
+                sourceChooser = SourceChooserDialog.getInstance(screenTitle);
+                sourceChooser.addEventListener(this);
+                sourceChooser.show(getSupportFragmentManager(), "SourceChooser");
+            }else {
+                if(savedInstanceState == null) {
+                    if (selectorType.equals(ONLY_GALLERY)) {
+                        onChooseGallery();
+                    }
+
+                    if (selectorType.equals(ONLY_CAMERA)) {
+                        onChooseCamera();
+                    }
+                }
+            }
         }
     }
 
@@ -197,7 +233,9 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
     private void onUriNull() {
         Intent resultIntent = new Intent();
         setResult(Activity.RESULT_CANCELED, resultIntent);
-        sourceChooser.dismiss();
+        if(sourceChooser != null) {
+            sourceChooser.dismiss();
+        }
         finish();
     }
 
@@ -225,6 +263,7 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
 
     private void compressImage(File file) {
 
+        compositeDisposable.add(
         new Compressor(this)
                 .setQuality(75)
                 .setMaxWidth(640)
@@ -240,7 +279,9 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
                         resultIntent.putExtra(IMAGE, Uri.fromFile(file));
                         setResult(Activity.RESULT_OK, resultIntent);
 
-                        sourceChooser.dismiss();
+                        if(sourceChooser != null){
+                            sourceChooser.dismiss();
+                        }
                         finish();
 
                     }
@@ -249,7 +290,7 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
                     public void accept(Throwable throwable) {
                         Log.e(TAG, throwable.toString());
                     }
-                });
+                }));
     }
 
     public static class AspectRatioWrapper implements Serializable {
@@ -268,5 +309,12 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
         int getRatioY() {
             return ratioY;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
+        compositeDisposable.dispose();
     }
 }
