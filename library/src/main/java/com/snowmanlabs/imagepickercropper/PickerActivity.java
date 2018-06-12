@@ -228,6 +228,11 @@ public class PickerActivity extends AppCompatActivity implements SourceChooserDi
             }
         }
 
+        if(resultCode == RESULT_CANCELED){
+            if(sourceChooser == null) {
+                finish();
+            }
+        }
     }
 
     private void onUriNull() {
