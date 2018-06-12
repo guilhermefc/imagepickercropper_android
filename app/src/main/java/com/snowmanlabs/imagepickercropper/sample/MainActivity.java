@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     private void inflateViews() {
         picButton = findViewById(R.id.picButton);
         fixedRatioButton = findViewById(R.id.fixedRatioButton);
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         picButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(PickerActivity.getIntent(getApplicationContext(), "Select Source"), IMAGE_REQUEST_CODE);
+                startActivityForResult(PickerActivity.getIntent(getApplicationContext(), "Select Source", PickerActivity.ONLY_GALLERY), IMAGE_REQUEST_CODE);
             }
         });
 
